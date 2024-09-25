@@ -1,3 +1,4 @@
+using AstroAPI;
 using Microsoft.EntityFrameworkCore;
 
 public class AstroDb : DbContext
@@ -8,5 +9,7 @@ public class AstroDb : DbContext
 
     public DbSet<Planet> Planets => Set<Planet>();
     public DbSet<Moon> Moons => Set<Moon>();
+
+    public DbSet<Asteroid> Asteroids => Set<Asteroid>();
 
 }

@@ -1,3 +1,4 @@
+using AstroAPI;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -104,6 +105,51 @@ app.MapDelete("/moons/{id}", async (AstroDb db, int id) =>
     db.Moons.Remove(moon);
     await db.SaveChangesAsync();
     return Results.Ok();
+});
+
+app.MapGet("/asteroids", async (AstroDb db) =>
+{
+    return await db.Asteroids.ToListAsync();
+});
+
+app.MapGet("/asteroids/{id}", async (AstroDb db, int id) =>
+{
+    var asteroid = await db.Asteroids.FindAsync(id);
+    if (asteroid is null)
+    {
+        return Results.NotFound();
+    }
+    return Results.Ok(asteroid);
+});
+
+app.MapPost("/asteroids", async (AstroDb db, Asteroid asteroid) =>
+{
+    db.Asteroids.Add(asteroid);
+    await db.SaveChangesAsync();
+    return Results.Created($"/asteroids/{asteroid.Id}", asteroid);
+});
+
+app.MapPut("/asteroids/{id}", async (AstroDb db, int id, Asteroid asteroid) =>
+{
+    if (id != asteroid.Id)
+    {
+        return Results.BadRequest();
+    }
+    db.Asteroids.Update(asteroid);
+    await db.SaveChangesAsync();
+    return Results.Ok(asteroid);
+});
+
+app.MapDelete("/asteroids/{id}", async (AstroDb db, int id) =>
+{
+    var asteroid = await db.Asteroids.FindAsync(id);
+    if (asteroid is null)
+    {
+        return Results.NotFound();
+    }
+    db.Asteroids.Remove(asteroid);
+    await db.SaveChangesAsync();
+    return Results.Ok(asteroid);
 });
 
 app.Run();
